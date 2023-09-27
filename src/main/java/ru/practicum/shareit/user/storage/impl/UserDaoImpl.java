@@ -33,7 +33,6 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public Optional<User> update(long userId, User user) {
-
         User newUser = users.get(userId);
 
         if (user.getName() != null) {

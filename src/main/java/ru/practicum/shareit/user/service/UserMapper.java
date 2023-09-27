@@ -2,7 +2,7 @@ package ru.practicum.shareit.user.service;
 
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.model.UserDto;
+import ru.practicum.shareit.user.dto.UserDto;
 
 import java.util.ArrayList;
 import java.util.List;
