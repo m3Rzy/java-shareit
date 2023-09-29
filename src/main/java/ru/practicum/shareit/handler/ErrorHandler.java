@@ -4,13 +4,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.practicum.shareit.item.exception.DeniedAccessException;
-import ru.practicum.shareit.item.exception.ItemNotFoundException;
-import ru.practicum.shareit.item.exception.ItemValidationException;
-import ru.practicum.shareit.item.exception.OwnerNotFoundException;
-import ru.practicum.shareit.user.exception.EmailBadRequestException;
-import ru.practicum.shareit.user.exception.EmailConflictException;
-import ru.practicum.shareit.user.exception.UserNotFoundException;
+import ru.practicum.shareit.exception.DeniedAccessException;
+import ru.practicum.shareit.exception.BadRequestException;
+import ru.practicum.shareit.exception.EmailConflictException;
+import ru.practicum.shareit.exception.NotFoundException;
 
 @RestControllerAdvice
 public class ErrorHandler {
@@ -22,20 +19,8 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handle(EmailBadRequestException e) {
-        return new ErrorResponse(e.getMessage());
-    }
-
-    @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handle(UserNotFoundException e) {
-        return new ErrorResponse(e.getMessage());
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handle(ItemNotFoundException e) {
+    public ErrorResponse handle(NotFoundException e) {
         return new ErrorResponse(e.getMessage());
     }
 
@@ -46,14 +31,8 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handle(OwnerNotFoundException e) {
-        return new ErrorResponse(e.getMessage());
-    }
-
-    @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handle(ItemValidationException e) {
+    public ErrorResponse handle(BadRequestException e) {
         return new ErrorResponse(e.getMessage());
     }
 }

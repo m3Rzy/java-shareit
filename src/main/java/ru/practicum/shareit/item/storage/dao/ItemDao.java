@@ -7,13 +7,13 @@ import java.util.Optional;
 
 public interface ItemDao {
 
-    Optional<Item> add(Item item);
+    Item add(Item item);
 
-    Optional<Item> update(Item item);
+    Item update(Item item);
 
-    Optional<Item> getById(Long itemId);
+    Optional<Item> findById(Long itemId);
 
-    List<Item> getAll(Long userId);
+    List<Item> findAll(Long userId);
 
-    List<Item> getByRequest(String text);
+    List<Item> findByRequest(String text);
 }

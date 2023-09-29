@@ -1,7 +1,7 @@
 package ru.practicum.shareit.user.storage.impl;
 
 import org.springframework.stereotype.Repository;
-import ru.practicum.shareit.user.exception.EmailConflictException;
+import ru.practicum.shareit.exception.EmailConflictException;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.dao.UserDao;
 
@@ -14,25 +14,25 @@ public class UserDaoImpl implements UserDao {
     private long id = 1;
 
     @Override
-    public List<User> getAll() {
+    public List<User> findAll() {
         return new ArrayList<>(users.values());
     }
 
     @Override
-    public Optional<User> getById(long userId) {
+    public Optional<User> findById(long userId) {
         return Optional.ofNullable(users.get(userId));
     }
 
     @Override
-    public Optional<User> add(User user) {
+    public User add(User user) {
         checkEmailIsAlreadyExist(user.getEmail());
         user.setId(generateId());
         users.put(user.getId(), user);
-        return Optional.of(user);
+        return user;
     }
 
     @Override
-    public Optional<User> update(long userId, User user) {
+    public User update(long userId, User user) {
         User newUser = users.get(userId);
 
         if (user.getName() != null) {
@@ -40,7 +40,7 @@ public class UserDaoImpl implements UserDao {
         }
 
         if (user.getEmail() != null) {
-            for (User userCheckEmail : getAll()) {
+            for (User userCheckEmail : findAll()) {
                 if (userCheckEmail.getEmail().equals(user.getEmail()) && userCheckEmail.getId() != userId) {
                     throw new EmailConflictException("Пользователь с такой почтой уже зарегистрирован.  " + user.getEmail());
                 }
@@ -48,7 +48,7 @@ public class UserDaoImpl implements UserDao {
             newUser.setEmail(user.getEmail());
         }
         users.put(userId, newUser);
-        return Optional.ofNullable(users.get(user.getId()));
+        return users.get(user.getId());
     }
 
     @Override

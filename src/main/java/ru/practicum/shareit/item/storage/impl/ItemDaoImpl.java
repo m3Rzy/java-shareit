@@ -1,7 +1,7 @@
 package ru.practicum.shareit.item.storage.impl;
 
 import org.springframework.stereotype.Repository;
-import ru.practicum.shareit.item.exception.DeniedAccessException;
+import ru.practicum.shareit.exception.DeniedAccessException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.dao.ItemDao;
 
@@ -17,12 +17,12 @@ public class ItemDaoImpl implements ItemDao {
     private long id = 1;
 
     @Override
-    public Optional<Item> getById(Long itemId) {
+    public Optional<Item> findById(Long itemId) {
         return Optional.ofNullable(items.get(itemId));
     }
 
     @Override
-    public List<Item> getAll(Long userId) {
+    public List<Item> findAll(Long userId) {
         List<Item> result = new ArrayList<>();
         for (Item item : items.values()) {
             if (item.getOwner().equals(userId)) result.add(item);
@@ -31,25 +31,25 @@ public class ItemDaoImpl implements ItemDao {
     }
 
     @Override
-    public Optional<Item> add(Item item) {
+    public Item add(Item item) {
         item.setId(generateId());
         items.put(item.getId(), item);
-        return Optional.of(item);
+        return item;
     }
 
     @Override
-    public Optional<Item> update(Item item) {
+    public Item update(Item item) {
         Item updatedItem = items.get(item.getId());
         if (!updatedItem.getOwner().equals(item.getOwner())) {
             throw new DeniedAccessException("Пользователь не владеет этой вещью. " +
                     "userId: " + item.getOwner() + ", itemId: " + item.getId());
         }
         checkItem(updatedItem, item);
-        return Optional.of(updatedItem);
+        return updatedItem;
     }
 
     @Override
-    public List<Item> getByRequest(String text) {
+    public List<Item> findByRequest(String text) {
         List<Item> result = new ArrayList<>();
         String wantedItem = text.toLowerCase();
 

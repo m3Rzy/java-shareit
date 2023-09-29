@@ -26,7 +26,7 @@ public class ItemController {
                               @NotNull
                               @RequestHeader(USER_ID_HEADER) Long userId) {
         Item item = mapper.toModel(itemDto, userId);
-        return mapper.toDto(itemService.createItem(item).get());
+        return mapper.toDto(itemService.createItem(item));
     }
 
     @PatchMapping("/{itemId}")
@@ -36,23 +36,23 @@ public class ItemController {
                               @RequestHeader(USER_ID_HEADER) Long userId) {
         Item item = mapper.toModel(itemDto, userId);
         item.setId(itemId);
-        return mapper.toDto(itemService.updateItem(item).get());
+        return mapper.toDto(itemService.updateItem(item));
     }
 
     @GetMapping("/{itemId}")
     public ItemDto findItemById(@NotNull @PathVariable Long itemId) {
-        return mapper.toDto(itemService.findItemById(itemId).get());
+        return mapper.toDto(itemService.getItemById(itemId));
     }
 
     @GetMapping
     public List<ItemDto> findAllItems(@NotNull @RequestHeader(USER_ID_HEADER) Long userId) {
-        List<Item> userItems = itemService.findAllItems(userId);
+        List<Item> userItems = itemService.getAll(userId);
         return mapper.mapItemListToItemDtoList(userItems);
     }
 
     @GetMapping("/search")
     public List<ItemDto> findItemsByRequest(@RequestParam String text) {
-        List<Item> foundItems = itemService.findItemsByRequest(text);
+        List<Item> foundItems = itemService.getItemsByRequest(text);
         return mapper.mapItemListToItemDtoList(foundItems);
     }
 }
