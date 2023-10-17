@@ -14,7 +14,8 @@ public class ItemMapper {
     }
 
     public Item toModel(ItemDto itemDto, Long ownerId) {
-        return new Item(null, itemDto.getName(), itemDto.getDescription(), itemDto.getAvailable(), ownerId);
+//        return new Item(null, itemDto.getName(), itemDto.getDescription(), itemDto.getAvailable(), ownerId);
+        return new Item(itemDto.getName(), itemDto.getDescription(), itemDto.getAvailable());
     }
 
     public List<ItemDto> mapItemListToItemDtoList(List<Item> userItems) {
