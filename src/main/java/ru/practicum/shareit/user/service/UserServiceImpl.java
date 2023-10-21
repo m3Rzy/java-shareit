@@ -4,90 +4,73 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 @Slf4j
-@Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional
-    public List<User> getAll() {
+    public List<UserDto> getAll() {
         if (userRepository.findAll().isEmpty()) {
-            log.info("Список пользователей пуст. ");
+            log.info("Список пользователей пуст.");
         } else {
             log.info("Количество записей в users: " + userRepository.findAll().size());
         }
-        return userRepository.findAll();
+        return userRepository.findAll()
+                .stream()
+                .map(UserMapper::mapToUserDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public UserDto getById(long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Пользователя с id " + userId + " не существует!"));
+        log.info("Пользователь {} был успешно найден с помощью id.", userId);
+        return UserMapper.mapToUserDto(user);
     }
 
     @Override
     @Transactional
-    public User getById(long userId) {
-        if (isExist(userId)) {
-            log.info("Пользователь {} был успешно найден с помощью id.", userId);
-            return userRepository.findById(userId).get();
-        } else {
-            throw new NotFoundException("Пользователя с id " + userId + " не существует!");
-        }
+    public UserDto createUser(UserDto userDto) {
+        User user = UserMapper.mapToUser(userDto);
+        log.info("Пользователь {} успешно добавлен.", user);
+        return UserMapper.mapToUserDto(userRepository.save(user));
     }
 
     @Override
     @Transactional
-    public User createUser(User user) {
-        if (user.getEmail() == null) {
-            throw new BadRequestException("Почта не может быть пустой.");
+    public UserDto updateUser(UserDto userDto, long userId) {
+        User updatedUser = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Пользователь с id " + userId + " не найден"));
+        if (userDto.getName() != null) {
+            updatedUser.setName(userDto.getName());
         }
-        userRepository.save(user);
-        log.info("Пользователь {} был успешно добавлен!", user);
-        return Optional.ofNullable(user).get();
-    }
-
-    @Override
-    @Transactional
-    public User updateUser(long userId, User user) {
-        User userOld = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("Пользователя с " + userId + " не существует")
-                );
-        String name = user.getName();
-        if (name != null && !name.isBlank()) {
-            userOld.setName(name);
+        if (userDto.getEmail() != null) {
+            updatedUser.setEmail(userDto.getEmail());
         }
-        String email = user.getEmail();
-        if (email != null && !email.isBlank()) {
-            userOld.setEmail(email);
-        }
-        log.info("Пользователь {} был успешно изменён.", userOld);
-        return userRepository.findById(userId).get();
+        log.info("Пользователь {} был успешно изменён.", updatedUser);
+        return UserMapper.mapToUserDto(userRepository.save(updatedUser));
     }
 
     @Override
     @Transactional
     public void deleteUserById(long userId) {
-        if (isExist(userId)) {
-            userRepository.deleteById(userId);
-            log.info("Пользователь с id {} был успешно удалён!", userId);
-        } else {
-            throw new NotFoundException("Пользователя с id " + userId + " не существует!");
-        }
-    }
-
-    private boolean isExist(long userId) {
-        for (User user : userRepository.findAll()) {
-            if (userId == user.getId()) {
-                return true;
-            }
-        }
-        return false;
+        userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Пользователь с id " + userId + " не найден"));
+        log.info("Пользователь с id {} был успешно удалён!", userId);
+        userRepository.deleteById(userId);
     }
 }
