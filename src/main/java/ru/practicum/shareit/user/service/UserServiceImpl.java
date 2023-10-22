@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDto createUser(UserDto userDto) {
+    public UserDto create(UserDto userDto) {
         User user = UserMapper.mapToUser(userDto);
         log.info("Пользователь {} успешно добавлен.", user);
         return UserMapper.mapToUserDto(userRepository.save(user));
@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDto updateUser(UserDto userDto, long userId) {
+    public UserDto update(UserDto userDto, long userId) {
         User updatedUser = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь с id " + userId + " не найден"));
         if (userDto.getName() != null) {
@@ -67,7 +67,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void deleteUserById(long userId) {
+    public void delete(long userId) {
         userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь с id " + userId + " не найден"));
         log.info("Пользователь с id {} был успешно удалён!", userId);

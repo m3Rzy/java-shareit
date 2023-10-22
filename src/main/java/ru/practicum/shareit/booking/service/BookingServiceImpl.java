@@ -30,11 +30,11 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public BookingDtoOutput createBooking(long userId, BookingDtoInput bookingDtoInput) {
+    public BookingDtoOutput create(long userId, BookingDtoInput bookingDtoInput) {
 
-        if (bookingDtoInput.getStart() == null || bookingDtoInput.getEnd() == null) {
-            throw new BadRequestException("Время не может быть пустым.");
-        }
+//        if (bookingDtoInput.getStart() == null || bookingDtoInput.getEnd() == null) {
+//            throw new BadRequestException("Время не может быть пустым.");
+//        }
 
         if (!isBefore(bookingDtoInput)) {
             throw new BadRequestException("Ошибка со временем." +
@@ -61,7 +61,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public BookingDtoOutput findBookingById(long userId, long id) {
+    public BookingDtoOutput getById(long userId, long id) {
         Booking booking = bookingRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Бронирования с id " + id + " не существует!"));
 
@@ -76,7 +76,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public List<BookingDtoOutput> findAllBookings(long userId, String state) {
+    public List<BookingDtoOutput> getAll(long userId, String state) {
         userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователя с id " + userId + " не существует!"));
 
@@ -118,7 +118,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public List<BookingDtoOutput> findOwnerBookings(long userId, String state) {
+    public List<BookingDtoOutput> getOwner(long userId, String state) {
         userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователя с id " + userId + " не существует!"));
 
@@ -165,7 +165,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public BookingDtoOutput updateApproval(long userId, long id, Boolean isApproved) {
+    public BookingDtoOutput update(long userId, long id, Boolean isApproved) {
         Booking booking = bookingRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Бронирования с id " + id + " не существует!"));
 

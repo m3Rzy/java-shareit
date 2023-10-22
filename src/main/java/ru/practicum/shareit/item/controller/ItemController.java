@@ -21,13 +21,13 @@ public class ItemController {
     @PostMapping
     public ItemDto createItem(@RequestHeader(header) long userId,
                               @Valid @RequestBody ItemDto itemDto) {
-        return itemService.createItem(userId, itemDto);
+        return itemService.create(userId, itemDto);
     }
 
     @PatchMapping("/{id}")
     public ItemDto updateItem(@RequestHeader(header) long userId,
                               @RequestBody ItemDto itemDto, @PathVariable long id) {
-        return itemService.updateItem(userId, itemDto, id);
+        return itemService.update(userId, itemDto, id);
     }
 
     @GetMapping("/{id}")
@@ -43,13 +43,13 @@ public class ItemController {
 
     @GetMapping("/search")
     public List<ItemDto> findItemsByRequest(@RequestParam String text) {
-        return itemService.findItemsByRequest(text);
+        return itemService.getByRequest(text);
     }
 
     @PostMapping("/{itemId}/comment")
     public CommentDto createComment(@RequestHeader(header) long authorId,
                                     @Valid @RequestBody CommentDto commentDto, @PathVariable long itemId) {
-        return itemService.createComment(authorId, commentDto, itemId);
+        return itemService.comment(authorId, commentDto, itemId);
     }
 
 }

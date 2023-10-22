@@ -76,7 +76,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public ItemDto createItem(long userId, ItemDto itemDto) {
+    public ItemDto create(long userId, ItemDto itemDto) {
         User owner = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь с id " + userId + " не найден"));
         Item item = ItemMapper.mapToItem(itemDto, owner);
@@ -85,7 +85,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public ItemDto updateItem(long userId, ItemDto itemDto, long itemId) {
+    public ItemDto update(long userId, ItemDto itemDto, long itemId) {
         Item updatedItem = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Вещь с id " + itemId + " не найдена"));
 
@@ -113,7 +113,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public List<ItemDto> findItemsByRequest(String text) {
+    public List<ItemDto> getByRequest(String text) {
         if (text.isBlank()) {
             return new ArrayList<>();
         }
@@ -126,7 +126,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public CommentDto createComment(long authorId, CommentDto commentDto, long itemId) {
+    public CommentDto comment(long authorId, CommentDto commentDto, long itemId) {
         User author = userRepository.findById(authorId)
                 .orElseThrow(() -> new NotFoundException("Пользователя с id " + authorId + " не существует!"));
 

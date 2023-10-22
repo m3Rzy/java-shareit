@@ -23,13 +23,13 @@ public class BookingController {
     @PostMapping
     public BookingDtoOutput createBooking(@RequestHeader(header) long bookerId,
                                           @Valid @RequestBody BookingDtoInput bookingDtoInput) {
-        return bookingService.createBooking(bookerId, bookingDtoInput);
+        return bookingService.create(bookerId, bookingDtoInput);
     }
 
     @GetMapping("/{id}")
     public BookingDtoOutput findBookingById(@RequestHeader(header) long userId,
                                             @PathVariable long id) {
-        return bookingService.findBookingById(userId, id);
+        return bookingService.getById(userId, id);
     }
 
     @GetMapping
@@ -37,7 +37,7 @@ public class BookingController {
                                                   @RequestParam(defaultValue = "ALL") String state) {
         BookingState.parseFrom(state)
                 .orElseThrow(() -> new BadRequestException("Unknown state: " + state));
-        return bookingService.findAllBookings(userId, state);
+        return bookingService.getAll(userId, state);
     }
 
     @GetMapping("/owner")
@@ -45,13 +45,13 @@ public class BookingController {
                                                     @RequestParam(defaultValue = "ALL") String state) {
         BookingState.parseFrom(state)
                 .orElseThrow(() -> new BadRequestException("Unknown state: " + state));
-        return bookingService.findOwnerBookings(ownerId, state);
+        return bookingService.getOwner(ownerId, state);
     }
 
     @PatchMapping("/{id}")
     public BookingDtoOutput updateBooking(@RequestHeader(header) long ownerId,
                                           @PathVariable long id,
                                           @RequestParam("approved") Boolean isApproved) {
-        return bookingService.updateApproval(ownerId, id, isApproved);
+        return bookingService.update(ownerId, id, isApproved);
     }
 }
