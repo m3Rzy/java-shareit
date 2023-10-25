@@ -1,6 +1,9 @@
 package ru.practicum.shareit.booking.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDtoInput;
 import ru.practicum.shareit.booking.dto.BookingDtoOutput;
@@ -9,8 +12,10 @@ import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.exception.BadRequestException;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.util.List;
 
+@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/bookings")
@@ -33,19 +38,33 @@ public class BookingController {
     }
 
     @GetMapping
-    public List<BookingDtoOutput> findAllBookings(@RequestHeader(header) long userId,
-                                                  @RequestParam(defaultValue = "ALL") String state) {
+    public List<BookingDtoOutput> findAllBookings(@RequestHeader("X-Sharer-User-Id") long userId,
+                                                  @RequestParam(defaultValue = "ALL") String state,
+                                                  @RequestParam(defaultValue = "0")
+                                                  @Min(value = 0, message = "Значение не может быть меньше 0.")
+                                                  Integer from,
+                                                  @RequestParam(defaultValue = "10")
+                                                  @Min(value = 1, message = "Значение не может быть меньше 1.")
+                                                  Integer size) {
         BookingState.parseFrom(state)
                 .orElseThrow(() -> new BadRequestException("Unknown state: " + state));
-        return bookingService.getAll(userId, state);
+        Pageable pageable = PageRequest.of(from / size, size);
+        return bookingService.readAllBookerBookings(userId, state, pageable);
     }
 
     @GetMapping("/owner")
-    public List<BookingDtoOutput> findOwnerBookings(@RequestHeader(header) long ownerId,
-                                                    @RequestParam(defaultValue = "ALL") String state) {
+    public List<BookingDtoOutput> findOwnerBookings(@RequestHeader("X-Sharer-User-Id") long ownerId,
+                                                    @RequestParam(defaultValue = "ALL") String state,
+                                                    @RequestParam(defaultValue = "0")
+                                                    @Min(value = 0, message = "Значение не может быть меньше 0.")
+                                                    Integer from,
+                                                    @RequestParam(defaultValue = "10")
+                                                    @Min(value = 1, message = "Значение не может быть меньше 1.")
+                                                    Integer size) {
         BookingState.parseFrom(state)
                 .orElseThrow(() -> new BadRequestException("Unknown state: " + state));
-        return bookingService.getOwner(ownerId, state);
+        Pageable pageable = PageRequest.of(from / size, size);
+        return bookingService.readAllOwnerItemBookings(ownerId, state, pageable);
     }
 
     @PatchMapping("/{id}")
