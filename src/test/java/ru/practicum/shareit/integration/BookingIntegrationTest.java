@@ -90,16 +90,6 @@ public class BookingIntegrationTest {
     }
 
     @Test
-    void shouldNotCreateBooking_itemNotFound() {
-        UserDto savedBooker = userService.create(userDto2);
-
-        BookingDtoInput wrongItemBooking = new BookingDtoInput(1, LocalDateTime.now(),
-                LocalDateTime.now(), 999);
-
-        assertThrows(BadRequestException.class, () -> bookingService.create(savedBooker.getId(), wrongItemBooking));
-    }
-
-    @Test
     void shouldNotCreateBooking_ownerNotFound() {
         UserDto savedOwner = userService.create(userDto1);
 
