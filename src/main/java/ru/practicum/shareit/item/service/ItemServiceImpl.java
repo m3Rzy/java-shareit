@@ -24,6 +24,7 @@ import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.time.LocalDateTime;
@@ -41,13 +42,15 @@ public class ItemServiceImpl implements ItemService {
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
     private final ItemRequestRepository itemRequestRepository;
+    private final UserRepository userRepository;
 
     private final UserService userService;
 
     @Override
     @Transactional
     public ItemDtoComment getById(long userId, long itemId) {
-        userService.getById(userId);
+        userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Такого пользователя не существует!"));
 
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Такого предмета не существует."));
@@ -67,7 +70,8 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public List<ItemDtoComment> getAll(long userId, Pageable pageable) {
-        userService.getById(userId);
+        userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Такого пользователя не существует!"));
         return itemRepository.findAllByOwnerId(userId, pageable)
                 .getContent()
                 .stream()
@@ -82,7 +86,8 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public ItemDtoRequest create(long userId, ItemDtoInput itemDtoInput) {
-        User user = UserMapper.mapToUser(userService.getById(userId));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Такого пользователя не существует!"));
 
         ItemRequest itemRequest = itemRequestRepository.findById(itemDtoInput.getRequestId())
                 .orElse(null);
@@ -95,7 +100,6 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public ItemDtoRequest update(long userId, ItemDtoInput itemDtoInput, long itemId) {
-
         Item updatedItem = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Такого предмета не существует."));
 
@@ -121,7 +125,8 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public CommentDto comment(long authorId, CommentDto commentDto, long itemId) {
-        User user = UserMapper.mapToUser(userService.getById(authorId));
+        User user = userRepository.findById(authorId)
+                .orElseThrow(() -> new NotFoundException("Такого пользователя не существует!"));
 
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Такого предмета не существует."));

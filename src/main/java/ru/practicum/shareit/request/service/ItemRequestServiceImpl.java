@@ -15,6 +15,7 @@ import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.time.LocalDateTime;
@@ -30,13 +31,15 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     private final ItemRequestRepository itemRequestRepository;
     private final ItemRepository itemRepository;
+    private final UserRepository userRepository;
 
     private final UserService userService;
 
     @Override
     @Transactional
     public ItemRequestDtoOutput create(long userId, ItemRequestDto itemRequestDtoInput) {
-        User user = UserMapper.mapToUser(userService.getById(userId));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Такого пользователя не существует!"));
 
         ItemRequest itemRequest = ItemRequestMapper
                 .mapToItemRequest(itemRequestDtoInput, user, LocalDateTime.now());
@@ -52,7 +55,9 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     @Transactional
     public List<ItemRequestDtoOutput> getAllByRequestor(long userId) {
-        User user = UserMapper.mapToUser(userService.getById(userId));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Такого пользователя не существует!"));
+
         List<ItemRequest> requests = itemRequestRepository.findAllByRequestorIdOrderByCreatedDesc(userId);
 
         Map<Long, List<ItemDtoRequest>> items = findItemsByRequest(requests);
@@ -67,7 +72,8 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     @Transactional
     public List<ItemRequestDtoOutput> getAllUsersRequests(long userId, Pageable pageable) {
-        userService.getById(userId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Такого пользователя не существует!"));
 
         List<ItemRequest> requests = itemRequestRepository
                 .findAllByRequestorIdNotOrderByCreatedDesc(userId, pageable)
@@ -85,7 +91,8 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     @Transactional
     public ItemRequestDtoOutput getById(long userId, long id) {
-        userService.getById(userId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Такого пользователя не существует!"));
 
         ItemRequest itemRequest = itemRequestRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Такого запроса не существует."));

@@ -2,7 +2,6 @@ package ru.practicum.shareit.repository;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -23,7 +22,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
-@DisplayName("Тестирование репозитория bookings")
 public class BookingRepositoryTest {
     public Item item;
     public User booker;
@@ -89,7 +87,7 @@ public class BookingRepositoryTest {
     }
 
     @Test
-    void readAllOwnerItemsCurrentBookings() {
+    void shouldGetAllOwnerItemsCurrentBookings() {
         booking.setStart(LocalDateTime.now().minusHours(2));
         bookingRepository.save(booking);
 
@@ -105,7 +103,7 @@ public class BookingRepositoryTest {
     }
 
     @Test
-    void readAllOwnerItemsPastBookings() {
+    void shouldGetAllOwnerItemsPastBookings() {
         booking.setStart(LocalDateTime.now().minusHours(3));
         booking.setEnd(LocalDateTime.now().minusHours(3));
         bookingRepository.save(booking);
@@ -122,7 +120,7 @@ public class BookingRepositoryTest {
     }
 
     @Test
-    void readAllOwnerItemsFutureBookings() {
+    void shouldGetAllOwnerItemsFutureBookings() {
         Page<Booking> futureBookings = bookingRepository
                 .readAllOwnerItemsFutureBookings(pageable, List.of(item.getId()), LocalDateTime.now());
 
@@ -135,7 +133,7 @@ public class BookingRepositoryTest {
     }
 
     @Test
-    void readAllBookerCurrentBookings() {
+    void shouldGetAllBookerCurrentBookings() {
         booking.setStart(LocalDateTime.now().minusHours(2));
         bookingRepository.save(booking);
 
@@ -151,7 +149,7 @@ public class BookingRepositoryTest {
     }
 
     @Test
-    void readAllBookerPastBookings() {
+    void shouldGetAllBookerPastBookings() {
         booking.setStart(LocalDateTime.now().minusHours(3));
         booking.setEnd(LocalDateTime.now().minusHours(3));
         bookingRepository.save(booking);
@@ -168,7 +166,7 @@ public class BookingRepositoryTest {
     }
 
     @Test
-    void readAllBookerFutureBookings() {
+    void shouldGetAllFutureBookings() {
         Page<Booking> futureBookings = bookingRepository
                 .readAllBookerFutureBookings(pageable, booker.getId(), LocalDateTime.now());
 

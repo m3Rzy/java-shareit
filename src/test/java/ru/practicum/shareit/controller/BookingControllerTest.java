@@ -38,13 +38,14 @@ public class BookingControllerTest {
 
     @MockBean
     private BookingService bookingService;
-    Booking booking;
-    BookingDtoOutput bookingDtoOutput;
-    BookingDtoInput bookingDtoInput;
-    Item item;
-    User owner;
-    User booker;
-    Pageable pageable;
+
+    private Booking booking;
+    private BookingDtoOutput bookingDtoOutput;
+    private BookingDtoInput bookingDtoInput;
+    private Item item;
+    private User owner;
+    private User booker;
+    private Pageable pageable;
 
     @BeforeEach
     void setUp() {
@@ -62,7 +63,7 @@ public class BookingControllerTest {
 
     @Test
     @SneakyThrows
-    void create_whenBookingValid_thenStatus200AndReturnedBooking() {
+    void shouldCreateBooking() {
         Mockito.when(bookingService.create(Mockito.anyLong(), Mockito.any())).thenReturn(bookingDtoOutput);
 
         String result = mockMvc.perform(post("/bookings")
@@ -81,7 +82,7 @@ public class BookingControllerTest {
 
     @Test
     @SneakyThrows
-    void create_whenEndNull_thenStatus400() {
+    void shouldCreateBooking_endNull() {
         bookingDtoInput.setEnd(null);
 
         mockMvc.perform(post("/bookings")
@@ -95,7 +96,7 @@ public class BookingControllerTest {
 
     @Test
     @SneakyThrows
-    void create_whenStartNull_thenStatus400() {
+    void shouldCreateBooking_startNull() {
         bookingDtoInput.setStart(null);
 
         mockMvc.perform(post("/bookings")
@@ -109,7 +110,7 @@ public class BookingControllerTest {
 
     @Test
     @SneakyThrows
-    void create_whenEndInPastAndAfterStart_thenStatus400() {
+    void shouldCreateBooking_endInPastAndAfterStart() {
         bookingDtoInput.setEnd(LocalDateTime.now().minusYears(1));
 
         mockMvc.perform(post("/bookings")
@@ -123,7 +124,7 @@ public class BookingControllerTest {
 
     @Test
     @SneakyThrows
-    void create_whenStartInPast_thenStatus400() {
+    void shouldCreateBooking_startInPast() {
         bookingDtoInput.setStart(LocalDateTime.now().minusYears(1));
 
         mockMvc.perform(post("/bookings")
@@ -133,19 +134,6 @@ public class BookingControllerTest {
                 .andExpect(status().isBadRequest());
 
         Mockito.verify(bookingService, Mockito.never()).create(Mockito.anyLong(), Mockito.any());
-    }
-
-    @Test
-    @SneakyThrows
-    void readTest() {
-        Mockito.when(bookingService.getById(2L, 1L)).thenReturn(bookingDtoOutput);
-
-        mockMvc.perform(get("/bookings/{id}", 1L)
-                        .header("X-Sharer-User-Id", 2L))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value("1"));
-
-        Mockito.verify(bookingService).getById(2L, 1L);
     }
 
     @Test
@@ -199,4 +187,17 @@ public class BookingControllerTest {
         assertEquals(objectMapper.writeValueAsString(bookingDtoOutput), result);
     }
 
+
+    @Test
+    @SneakyThrows
+    void readTest() {
+        Mockito.when(bookingService.getById(2L, 1L)).thenReturn(bookingDtoOutput);
+
+        mockMvc.perform(get("/bookings/{id}", 1L)
+                        .header("X-Sharer-User-Id", 2L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value("1"));
+
+        Mockito.verify(bookingService).getById(2L, 1L);
+    }
 }

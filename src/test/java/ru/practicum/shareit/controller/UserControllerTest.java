@@ -36,7 +36,7 @@ public class UserControllerTest {
 
     @BeforeEach
     void setUp() {
-        userDto1 = new UserDto(1, "User1", "user1@mail.ru");
+        userDto1 = new UserDto(1, "User1", "test1@yandex.ru");
     }
 
     @Test
@@ -106,7 +106,7 @@ public class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value("1"))
                 .andExpect(jsonPath("$.name").value("User1"))
-                .andExpect(jsonPath("$.email").value("user1@mail.ru"));
+                .andExpect(jsonPath("$.email").value("test1@yandex.ru"));
 
         Mockito.verify(userService).getById(1);
     }
@@ -114,7 +114,7 @@ public class UserControllerTest {
     @Test
     @SneakyThrows
     void readAllTest() {
-        userDto2 = new UserDto(2, "User2", "user2@mail.ru");
+        userDto2 = new UserDto(2, "User2", "test2@yandex.ru");
 
         Mockito.when(userService.getAll()).thenReturn(Arrays.asList(userDto1, userDto2));
 
@@ -128,7 +128,7 @@ public class UserControllerTest {
     @Test
     @SneakyThrows
     void updateTest() {
-        updatedUserDto = new UserDto(1, "Updated User1", "user1updated@mail.ru");
+        updatedUserDto = new UserDto(1, "Пользователь 4", "test3@yandex.ru");
 
         Mockito.when(userService.update(Mockito.any(), Mockito.anyLong())).thenReturn(updatedUserDto);
 
