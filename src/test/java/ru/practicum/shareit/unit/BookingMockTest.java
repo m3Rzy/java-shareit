@@ -33,6 +33,7 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static ru.practicum.shareit.booking.model.Status.WAITING;
 
 @ExtendWith(MockitoExtension.class)
 public class BookingMockTest {
@@ -70,13 +71,13 @@ public class BookingMockTest {
                 "описание предмета2", true, 0), user1, null);
 
         currentBooking = new BookingDtoInput(1, LocalDateTime.now(), LocalDateTime.now().plusHours(2), 1);
-        booking1 = BookingMapper.mapToBooking(currentBooking, item1, user2, Status.WAITING);
+        booking1 = BookingMapper.mapToBooking(currentBooking, item1, user2, WAITING);
 
         pastBooking = new BookingDtoInput(2,
                 LocalDateTime.of(2023, 8, 1, 10, 0, 0),
                 LocalDateTime.of(2023, 8, 8, 10, 0, 0),
                 1);
-        booking2 = BookingMapper.mapToBooking(pastBooking, item1, user2, Status.WAITING);
+        booking2 = BookingMapper.mapToBooking(pastBooking, item1, user2, WAITING);
 
         futureBooking = new BookingDtoInput(3, LocalDateTime.now().plusHours(1),
                 LocalDateTime.now().plusHours(2), 2);
@@ -112,7 +113,7 @@ public class BookingMockTest {
         NotFoundException notFoundException = assertThrows(NotFoundException.class,
                 () -> bookingService.create(999, currentBooking));
 
-        assertEquals("Такого пользователя не существует!", notFoundException.getMessage());
+        assertEquals("Пользователя с id 999 не существует!", notFoundException.getMessage());
     }
 
     @Test
@@ -297,7 +298,7 @@ public class BookingMockTest {
         NotFoundException notFoundException = assertThrows(NotFoundException.class,
                 () -> bookingService.readAllBookerBookings(999, "ALL", pageable));
 
-        assertEquals("Такого пользователя не существует!", notFoundException.getMessage());
+        assertEquals("Пользователя с id 999 не существует!", notFoundException.getMessage());
     }
 
     @Test
@@ -439,7 +440,7 @@ public class BookingMockTest {
         NotFoundException notFoundException = assertThrows(NotFoundException.class,
                 () -> bookingService.readAllOwnerItemBookings(999, "ALL", pageable));
 
-        assertEquals("Такого пользователя не существует!", notFoundException.getMessage());
+        assertEquals("Пользователя с id 999 не существует!", notFoundException.getMessage());
     }
 
     @Test
@@ -477,7 +478,7 @@ public class BookingMockTest {
         NotFoundException notFoundException = assertThrows(NotFoundException.class,
                 () -> bookingService.update(999, 1, true));
 
-        assertEquals("Такого пользователя не существует!", notFoundException.getMessage());
+        assertEquals("Пользователя с id 999 не существует!", notFoundException.getMessage());
     }
 
     @Test

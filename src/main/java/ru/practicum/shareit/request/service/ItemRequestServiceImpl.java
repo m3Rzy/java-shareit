@@ -38,7 +38,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Transactional
     public ItemRequestDtoOutput create(long userId, ItemRequestDto itemRequestDtoInput) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("Такого пользователя не существует!"));
+                .orElseThrow(() -> new NotFoundException("Пользователя с id " + userId + " не существует!"));
 
         ItemRequest itemRequest = ItemRequestMapper
                 .mapToItemRequest(itemRequestDtoInput, user, LocalDateTime.now());
@@ -55,7 +55,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Transactional
     public List<ItemRequestDtoOutput> getAllByRequestor(long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("Такого пользователя не существует!"));
+                .orElseThrow(() -> new NotFoundException("Пользователя с id " + userId + " не существует!"));
 
         List<ItemRequest> requests = itemRequestRepository.findAllByRequestorIdOrderByCreatedDesc(userId);
 
@@ -72,7 +72,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Transactional
     public List<ItemRequestDtoOutput> getAllUsersRequests(long userId, Pageable pageable) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("Такого пользователя не существует!"));
+                .orElseThrow(() -> new NotFoundException("Пользователя с id " + userId + " не существует!"));
 
         List<ItemRequest> requests = itemRequestRepository
                 .findAllByRequestorIdNotOrderByCreatedDesc(userId, pageable)
@@ -91,10 +91,10 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Transactional
     public ItemRequestDtoOutput getById(long userId, long id) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("Такого пользователя не существует!"));
+                .orElseThrow(() -> new NotFoundException("Пользователя с id " + userId + " не существует!"));
 
         ItemRequest itemRequest = itemRequestRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Такого запроса не существует."));
+                .orElseThrow(() -> new NotFoundException("Запроса с id " + id + " не существует!"));
 
         List<ItemDtoRequest> items = itemRepository.findAllByItemRequestId(itemRequest.getId())
                 .stream()

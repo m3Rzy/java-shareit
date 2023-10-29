@@ -66,7 +66,7 @@ public class ItemRequestIntegrationTest {
     void shouldNotCreateItemRequest_requestorNotFound() {
         Throwable thrown = assertThrows(NotFoundException.class,
                 () -> itemRequestService.create(9999, itemRequestDtoInput1));
-        assertEquals("Такого пользователя не существует!", thrown.getMessage());
+        assertEquals("Пользователя с id 9999 не существует!", thrown.getMessage());
     }
 
     @Test
@@ -102,7 +102,7 @@ public class ItemRequestIntegrationTest {
     void shouldNotGetAllRequestorRequests_requestorNotFound() {
         Throwable thrown = assertThrows(NotFoundException.class,
                 () -> itemRequestService.getAllByRequestor(9999));
-        assertEquals("Такого пользователя не существует!", thrown.getMessage());
+        assertEquals("Пользователя с id 9999 не существует!", thrown.getMessage());
     }
 
     @Test
@@ -126,13 +126,13 @@ public class ItemRequestIntegrationTest {
     void shouldNotGetAllUsersRequests_userNotFound() {
         Throwable thrown = assertThrows(NotFoundException.class,
                 () -> itemRequestService.getAllUsersRequests(9999, pageable));
-        assertEquals("Такого пользователя не существует!", thrown.getMessage());
+        assertEquals("Пользователя с id 9999 не существует!", thrown.getMessage());
     }
 
     @Test
     void shouldNotGetById_userNotFound() {
         Throwable thrown = assertThrows(NotFoundException.class, () -> itemRequestService.getById(9999, 1));
-        assertEquals("Такого пользователя не существует!", thrown.getMessage());
+        assertEquals("Пользователя с id 9999 не существует!", thrown.getMessage());
     }
 
     @Test
@@ -141,6 +141,6 @@ public class ItemRequestIntegrationTest {
 
         Throwable thrown = assertThrows(NotFoundException.class,
                 () -> itemRequestService.getById(savedRequestor.getId(), 999));
-        assertEquals("Такого запроса не существует.", thrown.getMessage());
+        assertEquals("Запроса с id 999 не существует!", thrown.getMessage());
     }
 }

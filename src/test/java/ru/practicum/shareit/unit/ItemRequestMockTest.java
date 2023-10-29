@@ -96,7 +96,7 @@ public class ItemRequestMockTest {
         NotFoundException notFoundException = assertThrows(NotFoundException.class,
                 () -> itemRequestService.create(999, itemRequestDtoInput1));
 
-        assertEquals("Такого пользователя не существует!", notFoundException.getMessage());
+        assertEquals("Пользователя с id 999 не существует!", notFoundException.getMessage());
     }
 
     @Test
@@ -134,7 +134,7 @@ public class ItemRequestMockTest {
         NotFoundException notFoundException = assertThrows(NotFoundException.class,
                 () -> itemRequestService.getAllByRequestor(999));
 
-        assertEquals("Такого пользователя не существует!", notFoundException.getMessage());
+        assertEquals("Пользователя с id 999 не существует!", notFoundException.getMessage());
     }
 
     @Test
@@ -172,7 +172,7 @@ public class ItemRequestMockTest {
         NotFoundException notFoundException = assertThrows(NotFoundException.class,
                 () -> itemRequestService.getAllUsersRequests(999, pageable));
 
-        assertEquals("Такого пользователя не существует!", notFoundException.getMessage());
+        assertEquals("Пользователя с id 999 не существует!", notFoundException.getMessage());
     }
 
     @Test
@@ -203,7 +203,7 @@ public class ItemRequestMockTest {
         NotFoundException notFoundException = assertThrows(NotFoundException.class,
                 () -> itemRequestService.getById(999, 1));
 
-        assertEquals("Такого пользователя не существует!", notFoundException.getMessage());
+        assertEquals("Пользователя с id 999 не существует!", notFoundException.getMessage());
     }
 
     @Test
@@ -214,6 +214,6 @@ public class ItemRequestMockTest {
         NotFoundException notFoundException = assertThrows(NotFoundException.class,
                 () -> itemRequestService.getById(2, 999));
 
-        assertEquals("Такого запроса не существует.", notFoundException.getMessage());
+        assertEquals("Запроса с id 999 не существует!", notFoundException.getMessage());
     }
 }

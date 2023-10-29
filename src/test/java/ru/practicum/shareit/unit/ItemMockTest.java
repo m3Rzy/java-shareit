@@ -45,6 +45,7 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static ru.practicum.shareit.booking.model.Status.APPROVED;
 
 @ExtendWith(MockitoExtension.class)
 public class ItemMockTest {
@@ -103,8 +104,8 @@ public class ItemMockTest {
         nextBooking = new BookingDtoInput(2L, LocalDateTime.now().plusHours(1),
                 LocalDateTime.now().plusHours(2), 1);
 
-        bookings = Arrays.asList(BookingMapper.mapToBooking(lastBooking, item1, user2, Status.APPROVED),
-                BookingMapper.mapToBooking(nextBooking, item1, user2, Status.APPROVED));
+        bookings = Arrays.asList(BookingMapper.mapToBooking(lastBooking, item1, user2, APPROVED),
+                BookingMapper.mapToBooking(nextBooking, item1, user2, APPROVED));
 
         pageable = PageRequest.of(0, 10);
 
@@ -151,7 +152,7 @@ public class ItemMockTest {
         NotFoundException notFoundException = assertThrows(NotFoundException.class,
                 () -> itemService.create(999, itemDtoInput1));
 
-        assertEquals("Такого пользователя не существует!", notFoundException.getMessage());
+        assertEquals("Пользователя с id 999 не существует!", notFoundException.getMessage());
     }
 
     @Test
@@ -179,7 +180,7 @@ public class ItemMockTest {
         NotFoundException notFoundException = assertThrows(NotFoundException.class,
                 () -> itemService.getById(999, 1));
 
-        assertEquals("Такого пользователя не существует!", notFoundException.getMessage());
+        assertEquals("Пользователя с id 999 не существует!", notFoundException.getMessage());
     }
 
     @Test
@@ -190,7 +191,7 @@ public class ItemMockTest {
         NotFoundException notFoundException = assertThrows(NotFoundException.class,
                 () -> itemService.getById(2, 999));
 
-        assertEquals("Такого предмета не существует.", notFoundException.getMessage());
+        assertEquals("Предмета с id 999 не существует!", notFoundException.getMessage());
     }
 
     @Test
@@ -249,7 +250,7 @@ public class ItemMockTest {
         NotFoundException notFoundException = assertThrows(NotFoundException.class,
                 () -> itemService.getAll(999, pageable));
 
-        assertEquals("Такого пользователя не существует!", notFoundException.getMessage());
+        assertEquals("Пользователя с id 999 не существует!", notFoundException.getMessage());
     }
 
     @Test
@@ -277,7 +278,7 @@ public class ItemMockTest {
         NotFoundException notFoundException = assertThrows(NotFoundException.class,
                 () -> itemService.update(1, updatedItemDtoInput, 999));
 
-        assertEquals("Такого предмета не существует.", notFoundException.getMessage());
+        assertEquals("Пользователя с id 1 не существует!", notFoundException.getMessage());
     }
 
     @Test
@@ -416,7 +417,7 @@ public class ItemMockTest {
         NotFoundException notFoundException = assertThrows(NotFoundException.class,
                 () -> itemService.comment(999, commentDto, 1));
 
-        assertEquals("Такого пользователя не существует!", notFoundException.getMessage());
+        assertEquals("Пользователя с id 999 не существует!", notFoundException.getMessage());
     }
 
     @Test
@@ -427,7 +428,7 @@ public class ItemMockTest {
         NotFoundException notFoundException = assertThrows(NotFoundException.class,
                 () -> itemService.comment(2, commentDto, 999));
 
-        assertEquals("Такого предмета не существует.", notFoundException.getMessage());
+        assertEquals("Предмета с id 999 не существует!", notFoundException.getMessage());
     }
 
     @Test
@@ -448,7 +449,7 @@ public class ItemMockTest {
         Mockito.when(userRepository.findById(2L)).thenReturn(Optional.of(user2));
         Mockito.when(itemRepository.findById(1L)).thenReturn(Optional.of(item1));
         Mockito.when(bookingRepository.findAllByItem_Id(1L)).thenReturn(Collections.singletonList(BookingMapper
-                .mapToBooking(nextBooking, item1, user2, Status.APPROVED)));
+                .mapToBooking(nextBooking, item1, user2, APPROVED)));
 
         BadRequestException itemAvailabilityException = assertThrows(BadRequestException.class,
                 () -> itemService.comment(2, commentDto, 1));

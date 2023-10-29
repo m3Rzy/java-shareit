@@ -9,7 +9,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
@@ -20,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static ru.practicum.shareit.booking.model.Status.WAITING;
 
 @DataJpaTest
 public class BookingRepositoryTest {
@@ -79,7 +79,7 @@ public class BookingRepositoryTest {
                 .end(LocalDateTime.now().plusHours(2))
                 .item(item)
                 .booker(booker)
-                .status(Status.WAITING)
+                .status(WAITING)
                 .build();
         bookingRepository.save(booking);
 

@@ -27,6 +27,7 @@ import java.util.Collections;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static ru.practicum.shareit.booking.model.Status.WAITING;
 
 @WebMvcTest(controllers = BookingController.class)
 public class BookingControllerTest {
@@ -55,7 +56,7 @@ public class BookingControllerTest {
 
         bookingDtoInput = new BookingDtoInput(1, LocalDateTime.now().plusHours(1),
                 LocalDateTime.now().plusHours(2), 1);
-        booking = BookingMapper.mapToBooking(bookingDtoInput, item, booker, Status.WAITING);
+        booking = BookingMapper.mapToBooking(bookingDtoInput, item, booker, WAITING);
         bookingDtoOutput = BookingMapper.mapToBookingDtoOutput(booking);
 
         pageable = PageRequest.of(0, 10);

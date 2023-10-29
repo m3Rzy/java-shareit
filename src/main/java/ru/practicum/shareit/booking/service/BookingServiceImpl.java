@@ -8,7 +8,6 @@ import ru.practicum.shareit.booking.dto.BookingDtoInput;
 import ru.practicum.shareit.booking.dto.BookingDtoOutput;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.NotFoundException;
@@ -20,6 +19,8 @@ import ru.practicum.shareit.user.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static ru.practicum.shareit.booking.model.Status.*;
 
 @Service
 @AllArgsConstructor
@@ -40,7 +41,7 @@ public class BookingServiceImpl implements BookingService {
         }
 
         User booker = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("Такого пользователя не существует!"));
+                .orElseThrow(() -> new NotFoundException("Пользователя с id " + userId + " не существует!"));
 
         Item item = itemRepository.findById(bookingDtoInput.getItemId())
                 .orElseThrow(() -> new NotFoundException("Вещь с id " + bookingDtoInput.getItemId() + " не найдена"));
@@ -52,7 +53,7 @@ public class BookingServiceImpl implements BookingService {
         if (!item.getAvailable()) {
             throw new BadRequestException("Ошибка бронирования!");
         }
-        Booking booking = BookingMapper.mapToBooking(bookingDtoInput, item, booker, Status.WAITING);
+        Booking booking = BookingMapper.mapToBooking(bookingDtoInput, item, booker, WAITING);
         return BookingMapper.mapToBookingDtoOutput(bookingRepository.save(booking));
     }
 
@@ -75,7 +76,7 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     public BookingDtoOutput update(long userId, long id, Boolean isApproved) {
         userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("Такого пользователя не существует!"));
+                .orElseThrow(() -> new NotFoundException("Пользователя с id " + userId + " не существует!"));
 
         Booking booking = bookingRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Бронирования с id " + id + " не существует!"));
@@ -85,14 +86,14 @@ public class BookingServiceImpl implements BookingService {
                     + " не может редактировать бронирование с id " + id);
         }
 
-        if (booking.getStatus().equals(Status.APPROVED)) {
+        if (booking.getStatus().equals(APPROVED)) {
             throw new BadRequestException("Бронирование уже подтверждено.");
         }
 
         if (isApproved) {
-            booking.setStatus(Status.APPROVED);
+            booking.setStatus(APPROVED);
         } else {
-            booking.setStatus(Status.REJECTED);
+            booking.setStatus(REJECTED);
         }
 
         return BookingMapper.mapToBookingDtoOutput(bookingRepository.save(booking));
@@ -102,7 +103,7 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     public List<BookingDtoOutput> readAllBookerBookings(long bookerId, String state, Pageable pageable) {
         userRepository.findById(bookerId)
-                .orElseThrow(() -> new NotFoundException("Такого пользователя не существует!"));
+                .orElseThrow(() -> new NotFoundException("Пользователя с id " + bookerId + " не существует!"));
 
         switch (state) {
             case "CURRENT":
@@ -126,7 +127,7 @@ public class BookingServiceImpl implements BookingService {
             case "WAITING":
                 return bookingRepository
                         .findAllByBooker_IdAndStatusInOrderByStartDesc(pageable, bookerId,
-                                List.of(Status.WAITING))
+                                List.of(WAITING))
                         .getContent()
                         .stream()
                         .map(BookingMapper::mapToBookingDtoOutput)
@@ -134,7 +135,7 @@ public class BookingServiceImpl implements BookingService {
             case "REJECTED":
                 return bookingRepository
                         .findAllByBooker_IdAndStatusInOrderByStartDesc(pageable, bookerId,
-                                List.of(Status.REJECTED))
+                                List.of(REJECTED))
                         .getContent()
                         .stream()
                         .map(BookingMapper::mapToBookingDtoOutput)
@@ -152,7 +153,7 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     public List<BookingDtoOutput> readAllOwnerItemBookings(long ownerId, String state, Pageable pageable) {
         userRepository.findById(ownerId)
-                .orElseThrow(() -> new NotFoundException("Такого пользователя не существует!"));
+                .orElseThrow(() -> new NotFoundException("Пользователя с id " + ownerId + " не существует!"));
 
         List<Long> userItems = itemRepository.findAllByOwnerId(ownerId)
                 .stream()
@@ -181,7 +182,7 @@ public class BookingServiceImpl implements BookingService {
             case "WAITING":
                 return bookingRepository
                         .findAllByItem_IdInAndStatusInOrderByStartDesc(pageable, userItems,
-                                List.of(Status.WAITING))
+                                List.of(WAITING))
                         .getContent()
                         .stream()
                         .map(BookingMapper::mapToBookingDtoOutput)
@@ -189,7 +190,7 @@ public class BookingServiceImpl implements BookingService {
             case "REJECTED":
                 return bookingRepository
                         .findAllByItem_IdInAndStatusInOrderByStartDesc(pageable, userItems,
-                                List.of(Status.REJECTED))
+                                List.of(REJECTED))
                         .getContent()
                         .stream()
                         .map(BookingMapper::mapToBookingDtoOutput)

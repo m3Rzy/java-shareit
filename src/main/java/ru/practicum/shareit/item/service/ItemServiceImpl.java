@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDtoForOwner;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.comment.dto.CommentDto;
 import ru.practicum.shareit.comment.mapper.CommentMapper;
@@ -32,6 +31,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static ru.practicum.shareit.booking.model.Status.APPROVED;
+
 @Service
 @AllArgsConstructor
 @Slf4j
@@ -49,10 +50,10 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     public ItemDtoComment getById(long userId, long itemId) {
         userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("Такого пользователя не существует!"));
+                .orElseThrow(() -> new NotFoundException("Пользователя с id " + userId + " не существует!"));
 
         Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new NotFoundException("Такого предмета не существует."));
+                .orElseThrow(() -> new NotFoundException("Предмета с id " + itemId + " не существует!"));
 
         BookingDtoForOwner lastBooking = null;
         BookingDtoForOwner nextBooking = null;
@@ -70,7 +71,7 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     public List<ItemDtoComment> getAll(long userId, Pageable pageable) {
         userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("Такого пользователя не существует!"));
+                .orElseThrow(() -> new NotFoundException("Пользователя с id " + userId + " не существует!"));
         return itemRepository.findAllByOwnerId(userId, pageable)
                 .getContent()
                 .stream()
@@ -86,7 +87,7 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     public ItemDtoRequest create(long userId, ItemDtoInput itemDtoInput) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("Такого пользователя не существует!"));
+                .orElseThrow(() -> new NotFoundException("Пользователя с id " + userId + " не существует!"));
 
         ItemRequest itemRequest = itemRequestRepository.findById(itemDtoInput.getRequestId())
                 .orElse(null);
@@ -100,7 +101,7 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     public ItemDtoRequest update(long userId, ItemDtoInput itemDtoInput, long itemId) {
         Item updatedItem = itemRepository.findById(itemId)
-                .orElseThrow(() -> new NotFoundException("Такого предмета не существует."));
+                .orElseThrow(() -> new NotFoundException("Пользователя с id " + userId + " не существует!"));
 
         if (updatedItem.getOwner().getId() != userId) {
             throw new NotFoundException("Нет прав для редактирования вещи.");
@@ -125,15 +126,15 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     public CommentDto comment(long authorId, CommentDto commentDto, long itemId) {
         User user = userRepository.findById(authorId)
-                .orElseThrow(() -> new NotFoundException("Такого пользователя не существует!"));
+                .orElseThrow(() -> new NotFoundException("Пользователя с id " + authorId + " не существует!"));
 
         Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new NotFoundException("Такого предмета не существует."));
+                .orElseThrow(() -> new NotFoundException("Предмета с id " + itemId + " не существует!"));
 
         List<Booking> itemBookings = bookingRepository.findAllByItem_Id(itemId)
                 .stream()
                 .filter(booking -> booking.getBooker().getId() == authorId)
-                .filter(booking -> booking.getStatus() == Status.APPROVED)
+                .filter(booking -> booking.getStatus() == APPROVED)
                 .collect(Collectors.toList());
 
         if (itemBookings.isEmpty()) {
@@ -182,7 +183,7 @@ public class ItemServiceImpl implements ItemService {
 
         return itemBookings.stream()
                 .filter(booking -> booking.getStart().isBefore(LocalDateTime.now()))
-                .filter(booking -> booking.getStatus() == Status.APPROVED)
+                .filter(booking -> booking.getStatus() == APPROVED)
                 .max(Comparator.comparing(Booking::getEnd))
                 .orElse(null);
     }
@@ -192,7 +193,7 @@ public class ItemServiceImpl implements ItemService {
 
         return itemBookings.stream()
                 .filter(booking -> booking.getStart().isAfter(LocalDateTime.now()))
-                .filter(booking -> booking.getStatus() == Status.APPROVED)
+                .filter(booking -> booking.getStatus() == APPROVED)
                 .min(Comparator.comparing(Booking::getStart))
                 .orElse(null);
     }

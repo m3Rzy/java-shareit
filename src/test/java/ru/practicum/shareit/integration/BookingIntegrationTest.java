@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static ru.practicum.shareit.booking.model.Status.APPROVED;
+import static ru.practicum.shareit.booking.model.Status.REJECTED;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
@@ -86,7 +88,7 @@ public class BookingIntegrationTest {
     void shouldNotCreateBooking_userNotFound() {
         Throwable thrown = assertThrows(NotFoundException.class,
                 () -> bookingService.create(9999, currentBooking));
-        assertEquals("Такого пользователя не существует!", thrown.getMessage());
+        assertEquals("Пользователя с id 9999 не существует!", thrown.getMessage());
     }
 
     @Test
@@ -352,7 +354,7 @@ public class BookingIntegrationTest {
     void shouldNotGetAllBookerBookings_bookerNotFound() {
         Throwable thrown = assertThrows(NotFoundException.class,
                 () -> bookingService.readAllBookerBookings(9999, "ALL", pageable));
-        assertEquals("Такого пользователя не существует!", thrown.getMessage());
+        assertEquals("Пользователя с id 9999 не существует!", thrown.getMessage());
     }
 
     @Test
@@ -539,7 +541,7 @@ public class BookingIntegrationTest {
     void shouldNotGetAllOwnerItemBookings_ownerNotFound() {
         Throwable thrown = assertThrows(NotFoundException.class,
                 () -> bookingService.readAllOwnerItemBookings(9999, "ALL", pageable));
-        assertEquals("Такого пользователя не существует!", thrown.getMessage());
+        assertEquals("Пользователя с id 9999 не существует!", thrown.getMessage());
     }
 
     @Test
@@ -553,7 +555,7 @@ public class BookingIntegrationTest {
         BookingDtoOutput updatedBooking = bookingService.update(savedOwner.getId(),
                 currentBooking.getId(), true);
 
-        assertEquals(Status.APPROVED, updatedBooking.getStatus());
+        assertEquals(APPROVED, updatedBooking.getStatus());
     }
 
     @Test
@@ -567,14 +569,14 @@ public class BookingIntegrationTest {
         BookingDtoOutput updatedBooking = bookingService.update(savedOwner.getId(),
                 currentBooking.getId(), false);
 
-        assertEquals(Status.REJECTED, updatedBooking.getStatus());
+        assertEquals(REJECTED, updatedBooking.getStatus());
     }
 
     @Test
     void shouldNotUpdateBooking_ownerNotFound() {
         Throwable thrown = assertThrows(NotFoundException.class,
                 () -> bookingService.update(999, currentBooking.getId(), false));
-        assertEquals("Такого пользователя не существует!", thrown.getMessage());
+        assertEquals("Пользователя с id 999 не существует!", thrown.getMessage());
     }
 
     @Test

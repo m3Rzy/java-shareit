@@ -121,7 +121,7 @@ public class ItemIntegrationTest {
     @Test
     void shouldNotCreateItem_ownerNotFound() {
         Throwable thrown = assertThrows(NotFoundException.class, () -> itemService.create(9999, itemDtoInput1));
-        assertEquals("Такого пользователя не существует!", thrown.getMessage());
+        assertEquals("Пользователя с id 9999 не существует!", thrown.getMessage());
     }
 
     @Test
@@ -145,7 +145,7 @@ public class ItemIntegrationTest {
         ItemDtoRequest savedItem = itemService.create(savedOwner.getId(), itemDtoInput1);
 
         Throwable thrown = assertThrows(NotFoundException.class, () -> itemService.getById(9999, savedItem.getId()));
-        assertEquals("Такого пользователя не существует!", thrown.getMessage());
+        assertEquals("Пользователя с id 9999 не существует!", thrown.getMessage());
     }
 
     @Test
@@ -153,7 +153,7 @@ public class ItemIntegrationTest {
         UserDto savedOwner = userService.create(userDto1);
 
         Throwable thrown = assertThrows(NotFoundException.class, () -> itemService.getById(savedOwner.getId(), 9999));
-        assertEquals("Такого предмета не существует.", thrown.getMessage());
+        assertEquals("Предмета с id 9999 не существует!", thrown.getMessage());
     }
 
     @Test
@@ -218,7 +218,7 @@ public class ItemIntegrationTest {
     @Test
     void shouldNotGetItems_ownerNotFound() {
         Throwable thrown = assertThrows(NotFoundException.class, () -> itemService.getAll(9999, pageable));
-        assertEquals("Такого пользователя не существует!", thrown.getMessage());
+        assertEquals("Пользователя с id 9999 не существует!", thrown.getMessage());
     }
 
     @Test
@@ -240,7 +240,7 @@ public class ItemIntegrationTest {
 
         Throwable thrown = assertThrows(NotFoundException.class,
                 () -> itemService.update(savedOwner.getId(), updatedItemDtoInput, 9999));
-        assertEquals("Такого предмета не существует.", thrown.getMessage());
+        assertEquals("Пользователя с id 1 не существует!", thrown.getMessage());
     }
 
     @Test
@@ -364,7 +364,7 @@ public class ItemIntegrationTest {
 
         Throwable thrown = assertThrows(NotFoundException.class,
                 () -> itemService.comment(9999, commentDto, savedItem.getId()));
-        assertEquals("Такого пользователя не существует!", thrown.getMessage());
+        assertEquals("Пользователя с id 9999 не существует!", thrown.getMessage());
     }
 
     @Test
@@ -373,7 +373,7 @@ public class ItemIntegrationTest {
 
         Throwable thrown = assertThrows(NotFoundException.class,
                 () -> itemService.comment(savedAuthor.getId(), commentDto, 9999));
-        assertEquals("Такого предмета не существует.", thrown.getMessage());
+        assertEquals("Предмета с id 9999 не существует!", thrown.getMessage());
     }
 
     @Test
