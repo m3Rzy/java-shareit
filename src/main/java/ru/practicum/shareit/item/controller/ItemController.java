@@ -1,12 +1,16 @@
 package ru.practicum.shareit.item.controller;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.comment.dto.CommentDto;
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.service.ItemService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.List;
 
 @RestController
@@ -15,41 +19,46 @@ import java.util.List;
 public class ItemController {
 
     public static final String header = "X-Sharer-User-Id";
-
     private final ItemService itemService;
 
     @PostMapping
-    public ItemDto createItem(@RequestHeader(header) long userId,
-                              @Valid @RequestBody ItemDto itemDto) {
-        return itemService.create(userId, itemDto);
+    public ItemDtoRequest createItem(@RequestHeader("X-Sharer-User-Id") long userId,
+                                     @Valid @RequestBody ItemDtoInput itemDtoInput) {
+        return itemService.create(userId, itemDtoInput);
     }
 
     @PatchMapping("/{id}")
-    public ItemDto updateItem(@RequestHeader(header) long userId,
-                              @RequestBody ItemDto itemDto, @PathVariable long id) {
-        return itemService.update(userId, itemDto, id);
+    public ItemDtoRequest updateItem(@RequestHeader("X-Sharer-User-Id") long userId,
+                                     @RequestBody ItemDtoInput itemDtoInput, @PathVariable long id) {
+        return itemService.update(userId, itemDtoInput, id);
     }
 
     @GetMapping("/{id}")
-    public ItemDto findItemById(@RequestHeader(header) long userId,
-                                @PathVariable long id) {
+    public ItemDtoComment findItemById(@RequestHeader("X-Sharer-User-Id") long userId,
+                                       @PathVariable long id) {
         return itemService.getById(userId, id);
     }
 
     @GetMapping
-    public List<ItemDto> findAll(@RequestHeader(header) long userId) {
-        return itemService.getAll(userId);
+    public List<ItemDtoComment> findAll(@RequestHeader("X-Sharer-User-Id") long userId,
+                                        @RequestParam(defaultValue = "0") @Min(0) Integer from,
+                                        @RequestParam(defaultValue = "10") @Min(1) @Max(200) Integer size) {
+        Pageable pageable = PageRequest.of(from / size, size);
+        return itemService.getAll(userId, pageable);
     }
 
     @GetMapping("/search")
-    public List<ItemDto> findItemsByRequest(@RequestParam String text) {
-        return itemService.getByRequest(text);
+    public List<ItemDtoOutput> search(@RequestParam String text,
+                                      @RequestParam(value = "from", defaultValue = "0") @Min(0) Integer from,
+                                      @RequestParam(value = "size", defaultValue = "10")
+                                      @Min(1) @Max(200) Integer size) {
+        Pageable pageable = PageRequest.of(from / size, size);
+        return itemService.search(text, pageable);
     }
 
     @PostMapping("/{itemId}/comment")
-    public CommentDto createComment(@RequestHeader(header) long authorId,
+    public CommentDto createComment(@RequestHeader("X-Sharer-User-Id") long authorId,
                                     @Valid @RequestBody CommentDto commentDto, @PathVariable long itemId) {
         return itemService.comment(authorId, commentDto, itemId);
     }
-
 }
