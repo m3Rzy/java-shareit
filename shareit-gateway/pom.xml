@@ -7,14 +7,12 @@
 		<artifactId>shareit</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-	<groupId>ru.practicum</groupId>
+
 	<artifactId>shareit-gateway</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+
 	<name>gateway</name>
-	<description>Demo project for Spring Boot</description>
-	<properties>
-		<java.version>11</java.version>
-	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
