@@ -10,6 +10,7 @@ import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.BadRequestException;
+import ru.practicum.shareit.exception.ItemAvailabilityException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
@@ -49,15 +50,9 @@ public class BookingServiceImpl implements BookingService {
         if (item.getOwner().getId() == userId) {
             throw new NotFoundException("Повторное бронирование невозможно.");
         }
-        System.out.println("до проверки available");
         if (!item.getAvailable()) {
-            System.out.println(item.getAvailable());
             throw new BadRequestException("Ошибка бронирования!");
         }
-        System.out.println("после проверки");
-        System.out.println(item.getAvailable());
-
-
 
         Booking booking = BookingMapper.mapToBooking(bookingDtoInput, item, booker, WAITING);
         return BookingMapper.mapToBookingDtoOutput(bookingRepository.save(booking));
@@ -93,7 +88,7 @@ public class BookingServiceImpl implements BookingService {
         }
 
         if (booking.getStatus().equals(APPROVED)) {
-            throw new BadRequestException("Бронирование уже подтверждено.");
+            throw new ItemAvailabilityException("Бронирование уже подтверждено.");
         }
 
         if (isApproved) {

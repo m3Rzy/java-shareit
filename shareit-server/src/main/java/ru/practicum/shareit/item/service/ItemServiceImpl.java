@@ -13,7 +13,7 @@ import ru.practicum.shareit.comment.dto.CommentDto;
 import ru.practicum.shareit.comment.mapper.CommentMapper;
 import ru.practicum.shareit.comment.model.Comment;
 import ru.practicum.shareit.comment.repository.CommentRepository;
-import ru.practicum.shareit.exception.BadRequestException;
+import ru.practicum.shareit.exception.ItemAvailabilityException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.mapper.ItemMapper;
@@ -23,7 +23,6 @@ import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
-import ru.practicum.shareit.user.service.UserService;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -43,8 +42,6 @@ public class ItemServiceImpl implements ItemService {
     private final CommentRepository commentRepository;
     private final ItemRequestRepository itemRequestRepository;
     private final UserRepository userRepository;
-
-    private final UserService userService;
 
     @Override
     @Transactional
@@ -138,7 +135,7 @@ public class ItemServiceImpl implements ItemService {
                 .collect(Collectors.toList());
 
         if (itemBookings.isEmpty()) {
-            throw new BadRequestException("Пользователь с id " + authorId + " не бронировал вещь с id " + itemId + ".");
+            throw new ItemAvailabilityException("Пользователь с id " + authorId + " не бронировал вещь с id " + itemId + ".");
         }
 
         List<Booking> pastOrPresentBookings = itemBookings.stream()
@@ -146,7 +143,7 @@ public class ItemServiceImpl implements ItemService {
                 .collect(Collectors.toList());
 
         if (pastOrPresentBookings.isEmpty()) {
-            throw new BadRequestException("Ошибка бронирования!");
+            throw new ItemAvailabilityException("Ошибка бронирования!");
         }
 
         commentDto.setCreated(LocalDateTime.now());
